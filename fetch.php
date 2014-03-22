@@ -6,6 +6,16 @@ $user = $_GET['argument2'];
 $pass = $_GET['argument3'];; 
 
 
+
+$r = mysql_connect($host, $user, $pass);
+
+if (!$r) {
+    echo "Could not connect to server\n";
+    trigger_error(mysql_error(), E_USER_ERROR);
+} else {
+    echo "Connection established\n"; 
+}
+
 $r = mysql_select_db('sql233068');
 
 if( !$r)
@@ -17,14 +27,6 @@ else
   echo "database selected";
 }
 
-$r = mysql_connect($host, $user, $pass);
-
-if (!$r) {
-    echo "Could not connect to server\n";
-    trigger_error(mysql_error(), E_USER_ERROR);
-} else {
-    echo "Connection established\n"; 
-}
 
 $query = "SELECT VESRION()";
 
