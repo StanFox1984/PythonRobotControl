@@ -6,7 +6,16 @@ $user = $_GET['argument2'];
 $pass = $_GET['argument3'];; 
 
 
-mysql_select_db('sql233068');
+$r = mysql_select_db('sql233068');
+
+if( !$r)
+{
+  echo "could not select database";
+}
+else
+{
+  echo "database selected";
+}
 
 $r = mysql_connect($host, $user, $pass);
 
