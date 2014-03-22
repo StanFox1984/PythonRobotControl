@@ -28,7 +28,7 @@ else
 }
 
 
-$query = "SELECT VESRION()";
+$query = "SELECT VERSION()";
 
 $rs = mysql_query($query);
 
