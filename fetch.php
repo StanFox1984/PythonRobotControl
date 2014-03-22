@@ -6,6 +6,8 @@ $user = $_GET['argument2'];
 $pass = $_GET['argument3'];; 
 
 
+mysql_select_db('sql233068');
+
 $r = mysql_connect($host, $user, $pass);
 
 if (!$r) {
