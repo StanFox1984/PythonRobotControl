@@ -16,7 +16,7 @@ if (!$r) {
     echo "Connection established\n"; 
 }
 
-$r = mysql_select_db('sql233068');
+$r = mysql_select_db('testst1984');
 
 if( !$r)
 {
@@ -28,7 +28,7 @@ else
 }
 
 
-$query = "SELECT VERSION()";
+$query = "SELECT id, name from test";
 
 $rs = mysql_query($query);
 
