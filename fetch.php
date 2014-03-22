@@ -17,7 +17,7 @@ if (!$r) {
     echo "Connection established\n"; 
 }
 
-$query = "SELECT * from test";
+$query = "SELECT id, data from test";
 
 $rs = mysql_query($query);
 
