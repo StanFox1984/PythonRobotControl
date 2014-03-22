@@ -41,7 +41,7 @@ if (!$rs) {
 
 $row = mysql_fetch_row($rs);
 
-echo "$row[0]\n";
+echo "$row[0] $row[1]\n";
 
 mysql_close();
 
