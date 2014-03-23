@@ -44,7 +44,8 @@ $numresults = mysql_num_rows($rs);
 $counter = 0;
 while( $row = mysql_fetch_array($rs) )
 {
-    echo "{ id:$row[0], latitude:$row[1], longitude:$row[2], devname:\"$row[3]\" }";
+    $s = stripslashes($row[3]);
+    echo "{ id:$row[0], latitude:$row[1], longitude:$row[2], devname:\"$s\" }";
     ++$counter;
     if( $counter < $numresults )
     {
