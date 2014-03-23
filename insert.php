@@ -31,7 +31,7 @@ else
 }
 
 $s = addslashes($devname);
-$query = "INSERT INTO bluetoothmap VALUES(0, $lat, $long, $s)";
+$query = "INSERT INTO bluetoothmap VALUES(0, $lat, $long, '$s')";
 
 $rs = mysql_query($query);
 
