@@ -2,8 +2,8 @@
 
 
 $host = "127.6.216.130"; 
-$user = "admin1fPqBSI"; 
-$pass = "bfyCQxRPs9s_";
+$user = "testtest"; 
+$pass = "pass";
 $device_id  = $_GET['device_id'];
 $message = $_GET['message'];
 
