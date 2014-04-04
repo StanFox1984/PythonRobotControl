@@ -27,7 +27,7 @@ if( !$r)
 }
 else
 {
-  echo "database selected";
+  //echo "database selected";
 }
 
 $s = addslashes($devname);
@@ -53,7 +53,7 @@ if (!$rs) {
             //echo "Query: $query executed\n"; 
             }
             
-echo "{ records : [ \n";
+echo "{ records : [ \r\n";
 $numresults = mysql_num_rows($rs);
 $counter = 0;
 while( $row = mysql_fetch_array($rs) )
@@ -63,12 +63,12 @@ while( $row = mysql_fetch_array($rs) )
     ++$counter;
     if( $counter < $numresults )
     {
-        echo ",\n";
+        echo ",\r\n";
     }
-    echo "\n";
+    echo "\r\n";
 }
                                                 
-echo "] }\n";
+echo "] }\r\n";
                                                 
 //$row = mysql_fetch_row($rs);
 
