@@ -16,7 +16,7 @@ if (!$r) {
     echo "Could not connect to server\n";
     trigger_error(mysql_error(), E_USER_ERROR);
 } else {
-    echo "Connection established\n"; 
+    //echo "Connection established\n"; 
 }
 
 $r = mysql_select_db('testst1984');
@@ -63,7 +63,7 @@ while( $row = mysql_fetch_array($rs) )
     ++$counter;
     if( $counter < $numresults )
     {
-        echo ",";
+        echo ",\n";
     }
     echo "\n";
 }
