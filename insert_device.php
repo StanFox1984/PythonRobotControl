@@ -30,6 +30,8 @@ else
   //echo "database selected";
 }
 
+if(isset($_GET("message")))
+{
 $s = addslashes($devname);
 $query = "INSERT INTO Devices VALUES (0,0,$message,$device_id);";
 
@@ -40,6 +42,7 @@ if (!$rs) {
     trigger_error(mysql_error(), E_USER_ERROR);
 } else {
     //echo "Query: $query executed\n"; 
+}
 }
 
 $query = "SELECT id, time, message, device_id from Devices";
