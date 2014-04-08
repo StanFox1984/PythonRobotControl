@@ -32,7 +32,7 @@ else
 if(isset($_GET["message"]))
 {
 $s = addslashes($devname);
-$query = "INSERT INTO Devices2 VALUES (0,0,$message,$device_id);";
+$query = "INSERT INTO Devices VALUES (0,0,$message,$device_id);";
 
 $rs = mysql_query($query);
 

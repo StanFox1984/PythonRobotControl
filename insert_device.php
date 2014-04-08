@@ -29,8 +29,7 @@ else
 {
   //echo "database selected";
 }
-
-if(isset($_GET("message")))
+if(isset($_GET["message"]))
 {
 $s = addslashes($devname);
 $query = "INSERT INTO Devices VALUES (0,0,$message,$device_id);";
@@ -62,7 +61,7 @@ $counter = 0;
 while( $row = mysql_fetch_array($rs) )
 {
     $s = stripslashes($row[3]);
-    echo "{ id:$row[0], time:$row[1], message:$row[2], device_id:$row[3] }";
+    echo "{  message:$row[2] }\r\n";
     ++$counter;
     if( $counter < $numresults )
     {
