@@ -44,7 +44,7 @@ if (!$rs) {
 }
 }
 
-$query = "SELECT id, time, message, device_id from Devices2";
+$query = "SELECT id, time, message, device_id from Devices";
 
 $rs = mysql_query($query);
 
