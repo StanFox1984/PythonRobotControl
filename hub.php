@@ -1,6 +1,6 @@
 <html>
  <head>
-  <title>Тестируем PHP</title>
+  <title>Test PHP</title>
  </head>
  <body>
 <br>
@@ -8,16 +8,16 @@
 /* Скрипт показывает клиентов, которые яблоки любят больше чем апельсины */
 
 /* Переменные для соединения с базой данных */
-$hostname = "127.3.113.130";
+$hostname = "127.6.216.130";
 $username = "admin";
 $password = "123456";
-$dbName = "stanfoxarduino";
+$dbName = "testst1984";
 
 /* Таблица MySQL, в которой хранятся данные */
 $userstable = "message_hub";
 
 /* создать соединение */
-mysql_connect($hostname,$username,$password) OR DIE("Не могу создать соединение ");
+mysql_connect($hostname,$username,$password) OR DIE("No connection ");
 /* выбрать базу данных. Если произойдет ошибка - вывести ее */
 mysql_select_db($dbName) or die(mysql_error()); 
 
