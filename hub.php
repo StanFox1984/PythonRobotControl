@@ -114,6 +114,7 @@ if(($show_cmd == 1))
       $strings = explode("DELIM", $row['data'])
       foreach( $strings as $string)
       {
+        echo $string
         if((($n+1) < $number) and (($n+1) < $num_ids))
             echo "{ \"msg_id\" : \"".$row['msg_id']."\", \"sender\" : \"".$row['sender']."\", \"receiver\" : \"".$row['receiver']."\", \"data\" : \"".$string."\", \"time\" : \"".$row['time']."\", \"custom\" : \"".$row['custom']."\" },";
         else
