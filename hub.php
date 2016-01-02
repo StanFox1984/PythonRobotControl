@@ -111,11 +111,15 @@ if(($show_cmd == 1))
     while ($row=mysql_fetch_array($res)) {
         if($n >= $num_ids)
           break;
-      if((($n+1) < $number) and (($n+1) < $num_ids))
-        echo "{ \"msg_id\" : \"".$row['msg_id']."\", \"sender\" : \"".$row['sender']."\", \"receiver\" : \"".$row['receiver']."\", \"data\" : \"".$row['data']."\", \"time\" : \"".$row['time']."\", \"custom\" : \"".$row['custom']."\" },";
-      else
-        echo "{ \"msg_id\" : \"".$row['msg_id']."\", \"sender\" : \"".$row['sender']."\", \"receiver\" : \"".$row['receiver']."\", \"data\" : \"".$row['data']."\", \"time\" : \"".$row['time']."\", \"custom\" : \"".$row['custom']."\" } }";
-      echo "<BR><BR>";
+      $strings = explode("DELIM", $row['data'])
+      foreach( $strings as $string)
+      {
+        if((($n+1) < $number) and (($n+1) < $num_ids))
+            echo "{ \"msg_id\" : \"".$row['msg_id']."\", \"sender\" : \"".$row['sender']."\", \"receiver\" : \"".$row['receiver']."\", \"data\" : \"".$string."\", \"time\" : \"".$row['time']."\", \"custom\" : \"".$row['custom']."\" },";
+        else
+            echo "{ \"msg_id\" : \"".$row['msg_id']."\", \"sender\" : \"".$row['sender']."\", \"receiver\" : \"".$row['receiver']."\", \"data\" : \"".$string."\", \"time\" : \"".$row['time']."\", \"custom\" : \"".$row['custom']."\" } }";
+        echo "<BR><BR>";
+      }
       $n=$n + 1;
     }
     echo "</CENTER>";
