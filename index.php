@@ -12,7 +12,7 @@ $username = "admin";
 $password = "123456";
 $dbName = "stanfoxarduino";
 
-$command = escapeshellcmd('python ./python_functor2.py');
+$command = escapeshellcmd('pythondsdas ./python_functor2.py');
 $output = shell_exec($command);
 
 echo "OUT: $output";
