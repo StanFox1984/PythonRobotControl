@@ -14,6 +14,7 @@ $dbName = "stanfoxarduino";
 
 $command = escapeshellcmd('./python_functor2.py');
 $output = shell_exec($command);
+
 echo "OUT: $output";
 
 /* Таблица MySQL, в которой хранятся данные */
