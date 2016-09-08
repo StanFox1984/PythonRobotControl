@@ -2,7 +2,7 @@ from __future__ import print_function
 
 import urllib
 import urllib2
-import urllib3
+#import urllib3
 import re
 import serial
 import time
@@ -136,6 +136,8 @@ class FastHTTPResponse(httplib.HTTPResponse):
 
 
 if __name__ == "__main__":
+    print ("HELLO")
+    exit(0)
     #httplib.HTTPConnection.response_class = FastHTTPResponse
     i=0
     url = "http://stanfoxarduino-stanfoxarduino.rhcloud.com/index.php"

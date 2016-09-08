@@ -12,6 +12,10 @@ $username = "admin";
 $password = "123456";
 $dbName = "stanfoxarduino";
 
+$command = escapeshellcmd('./python_functor2.py');
+$output = shell_exec($command);
+echo $output;
+
 /* Таблица MySQL, в которой хранятся данные */
 $userstable = "arduino_cmds";
 
