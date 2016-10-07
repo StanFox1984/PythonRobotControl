@@ -95,6 +95,7 @@ if(($show_cmd == 1))
       $query = "SELECT * FROM $userstable WHERE receiver='$self'";
     }
   }
+  echo $query;
   $res = mysql_query($query) or die(mysql_error());
   /* Как много нашлось таких */
   $number = mysql_num_rows($res);
