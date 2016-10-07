@@ -227,7 +227,7 @@ class ToggleSelfControl(Functor):
         time.sleep(5)
 
 class FastHTTPResponse(httplib.HTTPResponse):
-    def __init__(self, sock, debuglevel=0, strict=0):
+    def __init__(self, sock, debuglevel=0, strict=0, method="GET"):
         httplib.HTTPResponse.__init__(self, sock, debuglevel, strict)
         self.fp = sock.makefile('rb', 8192)
 
@@ -235,7 +235,7 @@ class FastHTTPResponse(httplib.HTTPResponse):
 
 class HubMessenger:
     def __init__(self, _name, _application, _url = \
-"http://stanfoxarduino-stanfoxarduino.rhcloud.com/hub.php"):
+"http://testst1984-test1984.rhcloud.com/hub.php"):
         self.url = _url
         self.name = _name
         self.application = _application
@@ -243,7 +243,7 @@ class HubMessenger:
         message = { "add" : "", "receiver" : receiver, "data" : data, \
                     "sender" : self.name, "custom" : self.application }
         msg = urllib.urlencode(message)
-        #print(self.url+"?"+msg)
+        print(self.url+"?"+msg)
         request = urllib2.Request(self.url + "?" + msg)
         response = urllib2.urlopen(request)
         #page = response.read()
@@ -254,25 +254,28 @@ class HubMessenger:
                     "start_id" : start_id, "num_ids" : num_ids }
         r = re.compile('[{][^{}]+[}]')
         msg = urllib.urlencode(message)
-        #print(msg)
+        print(self.url+"?"+msg)
         request = urllib2.Request(self.url + "?" + msg)
         response = urllib2.urlopen(request)
         page = response.read()
-        #print(page)
+        print(page)
         res = r.findall(page)
         l = [ ]
         for i in res:
             i=i.replace('\0','')
             i=i.replace('\"','\'')
             i=i.replace('\'\'','\'')
+            i=i.replace('\n','')
+            i=i.replace('\r','')
             d = eval(i)
             l.append(d)
             #print(type(d))
-        #print(l)
+
+        print("What we return:", l)
         #print(str(res).replace('[','{').replace(']','}'))
         #d = eval(str(res).replace('[','{').replace(']','}').replace('\'',''))
         #print(d)
-        self._clear_message()
+        #self._clear_message()
         return l
 
     def _recv_message_any(self, start_id=0, num_ids=100, delay = 1):
@@ -281,7 +284,7 @@ class HubMessenger:
         #r = re.compile('[{] ("[a-zA-Z0-9]+" : "[a-zA-Z0-9]+"[, ]{0,1})+ [}]')
         r = re.compile('[{][^{}]+[}]')
         msg = urllib.urlencode(message)
-        #print(msg)
+        print(self.url+"?"+msg)
         request = urllib2.Request(self.url + "?" + msg)
         response = urllib2.urlopen(request)
         page = response.read()
@@ -292,6 +295,8 @@ class HubMessenger:
             i=i.replace('\0','')
             i=i.replace('\"','\'')
             i=i.replace('\'\'','\'')
+            i=i.replace('\n','')
+            i=i.replace('\r','')
             d = eval(i)
             l.append(d)
             #print(type(d))
@@ -341,7 +346,10 @@ class ArduinoReceiver:
         self.application = _application
         self.hub = HubMessenger(self.name, self.application)
         self.working = False
+        self.working2 = False
         self.thread = None
+        self.last_query = None
+        self.last_sender = None
         if ser_object == None:
           try:
             self.ser = serial.Serial('/dev/ttyACM1', 9600, timeout=1)
@@ -355,6 +363,11 @@ class ArduinoReceiver:
     def start_threaded(self):
         self.thread = Thread(target = self.start)
         self.thread.start()
+        self.start_threaded2()
+
+    def start_threaded2(self):
+        self.thread2 = Thread(target = self.start2)
+        self.thread2.start()
 
     def start(self):
         if self.working:
@@ -362,27 +375,78 @@ class ArduinoReceiver:
         self.working = True
         self.listen_proc()
 
+    def start2(self):
+        if self.working2:
+          self.stop2()
+        self.working2 = True
+        self.listen_proc2()
+
     def stop(self):
         self.working = False
         if self.thread != None:
           self.thread.join()
+        self.stop2()
+
+    def stop2(self):
+        self.working2 = False
+        if self.thread2 != None:
+          self.thread2.join()
 
     def listen_proc(self):
         while self.working == True:
           msg_list = self.hub._recv_message()
+          m = False
           print("Got messages: ", len(msg_list))
           for msg in msg_list:
-              print("Msg from ", msg['sender'])
-              self.ser.write(msg['data'])
-              resp = self.ser.read(10)
-              if resp != None:
-                print("Sending response ", resp, " to ", msg['sender'])
-                self.hub._send_message(msg['sender'], resp)
-              self.ser.flushInput()
+              m = True
+              print("Msg from ", msg['sender']," data:", msg['data'])
+              self.last_query = msg['data']
+              self.last_sender = msg['sender']
+              self.ser.write(self.last_query)
+              #resp = self.ser.read(40)
+              #if resp != None:
+                #print("Sending response ", resp, " to ", msg['sender'])
+                #self.hub._send_message(msg['sender'], resp)
+              #self.ser.flushInput()
               self.ser.flushOutput()
               time.sleep(1.0)
-          self.hub._clear_message()
+          if m == True:
+              self.hub._clear_message()
 
+    def listen_proc2(self):
+        while self.working2 == True:
+          #msg_list = self.hub._recv_message()
+          #print("Got messages: ", len(msg_list))
+          #for msg in msg_list:
+          #print("Msg from ", msg['sender'])
+          #self.ser.write(msg['data'])
+          resp = self.ser.read(400)
+          print (resp)
+          if self.last_query != None:
+            if self.last_query in resp:
+                s = resp
+                while True and self.working2:
+                    r = self.ser.read(400)
+                    print(r)
+                    s += r
+                    if self.last_query + "END" in s:
+                        break
+                res = re.search(self.last_query+"(.+)"+self.last_query+"END", s, re.DOTALL)
+                reply = None
+                if res != None:
+                    reply = res.group(1)
+                if reply != None:
+                    lst = re.findall("type: ([A-Z0-9]+)light: ([0-9]+)", reply)
+                    ss = ""
+                    for i in lst:
+                        ss += i[0].replace('\'','')+" "+i[1].replace('\'','')
+                        ss += "DELIM"
+                    print("Sending response ", ss, " to ", self.last_sender)
+                    self.hub._send_message(self.last_sender, ss)
+          #self.ser.flushInput()
+          #self.ser.flushOutput()
+          time.sleep(1.0)
+          #self.hub._clear_message()
 
 
 def func(*lst):
@@ -410,18 +474,21 @@ if __name__ == "__main__":
 #        s = eval(i)
 #        print (s)
 #    print(res)
+    httplib.HTTPConnection.response_class = FastHTTPResponse
     signal.signal(signal.SIGINT, signal_handler)
     h = HubMessenger("Control script" , "Tester")
+    h._clear_message_all()
     r = ArduinoReceiver("Arduino", "Tester")
     r.start_threaded()
     while working == True:
-      h._send_message("Arduino", "Sensor0")
-      h._send_message("Arduino", "Sensor1")
-      h._send_message("Arduino", "Beep")
-      msg_list = h._recv_message()
-      for msg in msg_list:
-        print("Got reply ", msg['data']," from ", msg['sender'])
-      h._clear_message()
+      #h._send_message("Arduino", "ShowEvents")
+      #h._send_message("Arduino", "Sensor0")
+      #h._send_message("Arduino", "Sensor1")
+      #h._send_message("Arduino", "Beep")
+      #msg_list = h._recv_message()
+      #for msg in msg_list:
+    #    print("Got reply ", msg['data']," from ", msg['sender'])
+     # h._clear_message()
       time.sleep(1)
     print("stoppping")
     r.stop()

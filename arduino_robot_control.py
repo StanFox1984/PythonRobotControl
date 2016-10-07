@@ -6,6 +6,7 @@ import re
 import serial
 import time
 import httplib
+import socket
 
 
 
@@ -222,15 +223,15 @@ class ToggleSelfControl(Functor):
         time.sleep(5)
 
 class FastHTTPResponse(httplib.HTTPResponse):
-    def __init__(self, sock, debuglevel=0, strict=0):
+    def __init__(self, sock, debuglevel=0, strict=0, method="GET"):
         httplib.HTTPResponse.__init__(self, sock, debuglevel, strict)
-        self.fp = sock.makefile('rb', 8192)
+        self.fp = sock.makefile('rb', 800)
 
 # Tell the httplib that we want to use our hack..
 
 class HubMessenger:
     def __init__(self, _name, _application, _url = \
-"http://stanfoxarduino-stanfoxarduino.rhcloud.com/hub.php"):
+"http://testst1984-test1984.rhcloud.com/hub.php"):
         self.url = _url
         self.name = _name
         self.application = _application
@@ -238,10 +239,11 @@ class HubMessenger:
         message = { "add" : "", "receiver" : receiver, "data" : data, \
                     "sender" : self.name, "custom" : self.application }
         msg = urllib.urlencode(message)
-        #print(self.url+"?"+msg)
+        print(self.url+"?"+msg)
         request = urllib2.Request(self.url + "?" + msg)
         response = urllib2.urlopen(request)
-        #page = response.read()
+        page = response.read()
+        print(page)
         #time.sleep(delay)
 
     def _recv_message(self,  start_id=0, num_ids=100, delay = 1):
@@ -249,11 +251,11 @@ class HubMessenger:
                     "start_id" : start_id, "num_ids" : num_ids }
         r = re.compile('[{][^{}]+[}]')
         msg = urllib.urlencode(message)
-        #print(msg)
+        print(msg)
         request = urllib2.Request(self.url + "?" + msg)
         response = urllib2.urlopen(request)
         page = response.read()
-        #print(page)
+        print(page)
         res = r.findall(page)
         l = [ ]
         for i in res:
@@ -267,7 +269,7 @@ class HubMessenger:
         #print(str(res).replace('[','{').replace(']','}'))
         #d = eval(str(res).replace('[','{').replace(']','}').replace('\'',''))
         #print(d)
-        self._clear_message()
+        #self._clear_message()
         return l
 
     def _recv_message_any(self, start_id=0, num_ids=100, delay = 1):
@@ -276,11 +278,11 @@ class HubMessenger:
         #r = re.compile('[{] ("[a-zA-Z0-9]+" : "[a-zA-Z0-9]+"[, ]{0,1})+ [}]')
         r = re.compile('[{][^{}]+[}]')
         msg = urllib.urlencode(message)
-        #print(msg)
+        print(msg)
         request = urllib2.Request(self.url + "?" + msg)
         response = urllib2.urlopen(request)
         page = response.read()
-        #print(page)
+        print(page)
         res = r.findall(page)
         l = [ ]
         for i in res:
@@ -302,7 +304,7 @@ class HubMessenger:
         request = urllib2.Request(self.url + "?" + msg)
         response = urllib2.urlopen(request)
         page = response.read()
-        time.sleep(delay)
+        #time.sleep(delay)
 
     def _clear_message(self, delay = 1):
         message = { "clear" : "", "self" : self.name }
@@ -310,7 +312,7 @@ class HubMessenger:
         request = urllib2.Request(self.url + "?" + msg)
         response = urllib2.urlopen(request)
         page = response.read()
-        time.sleep(delay)
+        #time.sleep(delay)
 
 
 
@@ -321,6 +323,7 @@ def func(*lst):
     return mul
 
 if __name__ == "__main__":
+    httplib.HTTPConnection.response_class = FastHTTPResponse
     #r = re.compile('(("[a-zA-Z0-9]+" : "[a-zA-Z0-9]+")[, ]{0,1})+')
     #r2 = re.compile('[{][^{}]+[}]')
     #page = '{ { "gfgfgfg" : "klkl", "klklkl" : "lklkllllll" },<BR><BR>{ "gfgfgfg1" : "klkl1", "klklkl1" : "lklkllllll1" }<BR><BR> }'
@@ -331,10 +334,11 @@ if __name__ == "__main__":
 #        print (s)
 #    print(res)
 #    exit(0)
+    socket.setdefaulttimeout(2000)
     h = HubMessenger("arduino_cpu", "Tester")
     
-    while True:
-        l = h._recv_message()[0]['data']
+    #while True:
+    #    l = h._recv_message()[0]['data']
 
     h = HubMessenger("Stas" , "Tester")
     h2 = HubMessenger("Stas1" , "Tester")
@@ -403,5 +407,7 @@ if __name__ == "__main__":
                data2 = urllib.urlencode(data2)
                request2 = urllib2.Request(url + '?' + data2)
                response = urllib2.urlopen(request2)
-               page = response.read()from __future__ import print_function
+               page = response.read()
+
+#from __future__ import print_function
 
