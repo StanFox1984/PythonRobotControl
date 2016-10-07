@@ -118,7 +118,7 @@ if(($show_cmd == 1))
       echo "{ \"msg_id\" : \"".$row['msg_id']."\", \"sender\" : \"".$row['sender']."\", \"receiver\" : \"".$row['receiver']."\", \"data\" : \"".$rt."\", \"time\" : \"".$row['time']."\", \"custom\" : \"".$row['custom']."\" } }";
       foreach( $strings as $string)
       {
-        echo $strings[0]
+        //echo $strings[0]
         if((($n+1) < $number) and (($n+1) < $num_ids))
             echo "{ \"msg_id\" : \"".$row['msg_id']."\", \"sender\" : \"".$row['sender']."\", \"receiver\" : \"".$row['receiver']."\", \"data\" : \"".$string."\", \"time\" : \"".$row['time']."\", \"custom\" : \"".$row['custom']."\" },";
         else
