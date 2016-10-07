@@ -18,6 +18,7 @@ $userstable = "message_hub";
 
 /* создать соединение */
 mysql_connect($hostname,$username,$password) OR DIE("No connection ");
+echo "hhh"
 /* выбрать базу данных. Если произойдет ошибка - вывести ее */
 mysql_select_db($dbName) or die(mysql_error()); 
 
