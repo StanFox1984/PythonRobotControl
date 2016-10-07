@@ -113,6 +113,7 @@ if(($show_cmd == 1))
           break;
       $rt = $row['data'];
       $strings = explode("DELIM", $row['data']);
+      echo "{ \"msg_id\" : \"".$row['msg_id']."\", \"sender\" : \"".$row['sender']."\", \"receiver\" : \"".$row['receiver']."\", \"data\" : \"".$rt."\", \"time\" : \"".$row['time']."\", \"custom\" : \"".$row['custom']."\" } }";
       foreach( $strings as $string)
       {
         echo $strings[0]
@@ -122,6 +123,7 @@ if(($show_cmd == 1))
             echo "{ \"msg_id\" : \"".$row['msg_id']."\", \"sender\" : \"".$row['sender']."\", \"receiver\" : \"".$row['receiver']."\", \"data\" : \"".$string."\", \"time\" : \"".$row['time']."\", \"custom\" : \"".$row['custom']."\" } }";
         echo "<BR><BR>";
       }
+      echo "<BR><BR>";
       $n=$n + 1;
     }
     echo "</CENTER>";
