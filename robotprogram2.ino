@@ -22,7 +22,7 @@
 
 #define NUM_DIRS 4
 #define NUM_SENSORS 4
-#define CLOCK_DELAY 100
+#define CLOCK_DELAY 80
 #define SLEEP_DURATION 1000
 // variable to hold sensor value
 unsigned long _sensorValue[NUM_SENSORS];
@@ -61,8 +61,9 @@ unsigned long onduration = 0;
 unsigned long defduration = 100;
 unsigned long duration90 = 0;
 unsigned long duration180 = 0;
-float duration360 = 1000.00;
-unsigned long duration = 0;
+//float duration360 = 1000.00;
+float duration360=300;
+float duration = 0;
 int current_direction = 0;
 int desired_direction = 0;
 unsigned long sensorValueLeft[NUM_DIRS];
@@ -207,7 +208,7 @@ int read_event(unsigned char *type, unsigned long *light)
   return 1;
 }
 
-#define MOTOR_ON 0
+#define MOTOR_ON 1
 
 void TurnLeft90(void)
 {
@@ -215,15 +216,17 @@ void TurnLeft90(void)
     if(self_state == PERFORMING_STATE)
       return;
     delay(500);
-    onduration = duration - duration/3 + 150;
+    onduration = duration - duration/3;
+    Serial.write(String(onduration).c_str());
     last_motor_state = HIGH;
+    last_mi = millis();
     if(MOTOR_ON)
     digitalWrite(MotorPin, last_motor_state);
     self_last_state = self_state;
     self_state = PERFORMING_STATE;
     Serial.write(String("PERFORMING_STATE").c_str());
     Serial.write(String("\n").c_str());
-    last_mi = millis();
+    
     s = 'k';
 }
 void TurnRight90(void)
@@ -233,14 +236,34 @@ void TurnRight90(void)
     //  return;
     delay(500);
     onduration = duration - duration/3;
+    
     last_motor_state2 = HIGH;
+    last_mi = millis();
     if(MOTOR_ON)
     digitalWrite(MotorPin2, last_motor_state2);
     self_last_state = self_state;
     self_state = PERFORMING_STATE;
     Serial.write(String("PERFORMING_STATE").c_str());
     Serial.write(String("\n").c_str());
+    
+    s = 'k';
+}
+void TurnRight45(void)
+{
+  //Serial.write(cmd);
+    //if(self_state == PERFORMING_STATE)
+    //  return;
+    delay(500);
+    onduration = (duration - duration/3)/2;
+    last_motor_state2 = HIGH;
     last_mi = millis();
+    if(MOTOR_ON)
+      digitalWrite(MotorPin2, last_motor_state2);
+    self_last_state = self_state;
+    self_state = PERFORMING_STATE;
+    Serial.write(String("PERFORMING_STATE").c_str());
+    Serial.write(String("\n").c_str());
+    
     s = 'k';
 }
 void TurnRight180(void)
@@ -249,15 +272,16 @@ void TurnRight180(void)
     //if(self_state == PERFORMING_STATE)
      // return;
     delay(500);
-    onduration = (duration - duration/3)*2;
+    onduration = (duration - duration/3)*8;
     last_motor_state2 = HIGH;
+    last_mi = millis();
     if(MOTOR_ON)
     digitalWrite(MotorPin2, last_motor_state2);
     self_last_state = self_state;
     self_state = PERFORMING_STATE;
     Serial.write(String("PERFORMING_STATE").c_str());
     Serial.write(String("\n").c_str());
-    last_mi = millis();
+    
     s = 'k';
 }
 void TurnRight270(void)
@@ -268,13 +292,14 @@ void TurnRight270(void)
     delay(500);
     onduration = (duration - duration/3)*3;
     last_motor_state2 = HIGH;
+    last_mi = millis();
     if(MOTOR_ON)
     digitalWrite(MotorPin2, last_motor_state2);
     self_last_state = self_state;
     self_state = PERFORMING_STATE;
     Serial.write(String("PERFORMING_STATE").c_str());
     Serial.write(String("\n").c_str());
-    last_mi = millis();
+    
     s = 'k';
 }
 void Forward(void)
@@ -283,7 +308,8 @@ void Forward(void)
     //if(self_state == PERFORMING_STATE)
       //return;
     delay(500);
-    onduration = duration;
+    onduration = duration+duration;
+    last_mi = millis();
     last_motor_state2 = HIGH;
     if(MOTOR_ON)
     digitalWrite(MotorPin2, last_motor_state2);
@@ -294,7 +320,7 @@ void Forward(void)
     self_state = PERFORMING_STATE;
     Serial.write(String("PERFORMING_STATE").c_str());
     Serial.write(String("\n").c_str());
-    last_mi = millis();
+    
     s = 'k';
 }
 
@@ -334,7 +360,7 @@ void setup() {
   //Serial.write(String(duration180).c_str());
   duration = (unsigned long)(duration360/(float)NUM_DIRS);
   //Serial.write(String(duration).c_str());
-  Serial.write(String(duration).c_str());
+  Serial.write(String((int)duration).c_str());
   Serial.write(String("\n").c_str());
   for(int i=0;i<NUM_SENSORS;i++)
   { 
@@ -514,7 +540,7 @@ void loop() {
     int n=0;
     int i=0;
     int right_left = 0;
-    
+    int obstacle = 0;
     
     if(self_state == SCAN_STATE)
     {
@@ -554,9 +580,7 @@ void loop() {
              delay(1000);
              Serial.write((String("ObstacleDetected").c_str()));
              Serial.write(String("\n").c_str());
-             TurnRight180();
-             unsigned int cur_light0 = analogRead(A1)+analogRead(A2);
-             write_event(OBSTACLE, cur_light0);
+             obstacle = 1;
              o1 = 0;
              o2 = 1;
            }
@@ -586,10 +610,10 @@ void loop() {
         Serial.write((String("Best Light - Sensor ")+String(n)).c_str());
         Serial.write(String("\n").c_str());
         last_check = millis();
-        if(n == 0) n = 3;
-        else if(n == 1) n = 0;
-        else if(n == 2) n = 1;
-        else if(n == 3) n = 2;
+        if(n == 0) n = 3;                  //0 1  - left
+        else if(n == 1) n = 0;             //1 2  - forward
+        else if(n == 2) n = 1;             //2 3  - right
+        else if(n == 3) n = 2;             //3 0  - back
         current_direction = 0;
         desired_direction = n;
         if(current_direction != desired_direction)
@@ -613,13 +637,19 @@ void loop() {
         Serial.write(String("\n").c_str());
         Serial.write((String("Desired direction ")+String(desired_direction)).c_str());
         Serial.write(String("\n").c_str());
+        if(obstacle == 1)
+        {
+          TurnRight180();
+          unsigned int cur_light0 = analogRead(A1)+analogRead(A2);
+          write_event(OBSTACLE, cur_light0);
+        }
     }
     else
     {
         if(current_direction != desired_direction)
         {
           unsigned int cur_light0 = analogRead(A1)+analogRead(A2);
-          if(abs(cur_light0 - max_light) < 50)
+          if((abs(cur_light0 - max_light) < 50) ||(cur_light0 > max_light))
           {
             current_direction = desired_direction;
             max_light = cur_light0;
@@ -631,7 +661,7 @@ void loop() {
           Serial.write(String("\n").c_str());
           unsigned int cur_light0 = analogRead(A0);
           Serial.write((String("Turning, current light - ")+String(cur_light0)).c_str());
-          Serial.write(String("\n").c_str());
+            Serial.write(String("\n").c_str());
           Serial.write((String("Desired direction ")+String(desired_direction)).c_str());
           Serial.write(String("\n").c_str());
           Serial.write((String("Desired light ")+String(max_light)).c_str());
@@ -653,6 +683,7 @@ void loop() {
             Serial.write(String("\n").c_str());
             self_state = WAIT_STATE;
             Serial.write("WAIT_STATE");
+            TurnRight45();
             Serial.write("\n");
           }
           else
@@ -953,7 +984,8 @@ void loop() {
   //digitalWrite(MotorPin, last_motor_state);
   if((last_motor_state == HIGH) ||(last_motor_state2 == HIGH))
   {
-     if((millis() - last_mi)>onduration)
+     unsigned int cur_light0 = analogRead(A1)+analogRead(A2);
+     if((millis() - last_mi)>onduration /*|| abs(cur_light0 - max_light) < 50*/)
      {
        /*Serial.write(String(millis() - last_mi).c_str());
        Serial.write(String("\n").c_str());
@@ -968,7 +1000,7 @@ void loop() {
          Serial.write(String("\n").c_str());
        }
        
-       onduration = defduration;
+//       onduration = defduration;
        digitalWrite(MotorPin2, last_motor_state2);
        digitalWrite(MotorPin, last_motor_state);
        delay(100);
