@@ -476,8 +476,8 @@ if __name__ == "__main__":
 #    print(res)
     httplib.HTTPConnection.response_class = FastHTTPResponse
     signal.signal(signal.SIGINT, signal_handler)
-    h = HubMessenger("Control script" , "Tester")
-    h._clear_message_all()
+    #h = HubMessenger("Control script" , "Tester")
+    #h._clear_message_all()
     r = ArduinoReceiver("Arduino", "Tester")
     r.start_threaded()
     while working == True:

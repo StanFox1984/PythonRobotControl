@@ -470,13 +470,13 @@ if __name__ == "__main__":
     httplib.HTTPConnection.response_class = FastHTTPResponse
     signal.signal(signal.SIGINT, signal_handler)
     h = HubMessenger("Control script" , "Tester")
-    h2 = HubMessenger("Arduino" , "Tester")
-    h._send_message("Arduino", "ShowEvents")
-    msgs = h2._recv_message()
-    for msg in msgs:
-        print("Got reply ", msg['data']," from ", msg['sender'])
-    h2._clear_message()
-    exit(0)
+    #h2 = HubMessenger("Arduino" , "Tester")
+    #h._send_message("Arduino", "ShowEvents")
+    #msgs = h2._recv_message()
+    #for msg in msgs:
+    #    print("Got reply ", msg['data']," from ", msg['sender'])
+    #h2._clear_message()
+    #exit(0)
 #    r = ArduinoReceiver("Arduino", "Tester")
 #    r.start_threaded()
     m = False
